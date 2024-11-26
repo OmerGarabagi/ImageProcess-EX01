@@ -54,22 +54,59 @@ def get_bar_height(image, idx):
 # Sections c, d
 # Remember to uncomment compare_hist before using it!
 
-# def compare_hist(src_image, target):
-	# Your code goes here
-	
-	# return True
-	# or
-	# return False
+def compare_hist(src_image, target):
+
+    # Compute target histogram and prepare signature
+    target_hist = cv2.calcHist([target], [0], None, [256], [0, 256]).flatten()
+    bin_indices = np.arange(256).astype(np.float32)
+    target_signature = np.array(
+        [[h, i] for h, i in zip(target_hist, bin_indices) if h > 0],
+        dtype=np.float32
+    )
+
+        # Define sliding window size
+    window_height, window_width = 15, 10
+
+    # Get the dimensions of the source image
+    image_height, image_width = src_image.shape[:2]
+
+    # Fixed x positions from 30 to 40 (size 10 pixels)
+    x_start = 30
+    x_end = x_start + window_width  # This will be 40
+
+    # Iterate over y positions from 100 to 330
+    for y in range(100, 115):
+        # Ensure the window does not exceed the image boundaries
+        if y + window_height > image_height:
+            break
+        # Extract the window at the fixed x positions
+        window = src_image[y:y + window_height, x_start:x_end]
+        # Compute window histogram and prepare signature
+        window_hist = cv2.calcHist([window], [0], None, [256], [0, 256]).flatten()
+        # Compute EMD
+        emd = np.sum(np.abs(np.cumsum(target_hist) - np.cumsum(window_hist)))
+        print(f"EMD at position (x={x_start}, y={y}): {emd}")
+        if emd < 260:
+            plt.imshow(window, cmap='gray') 
+            plt.show()
+            return True
+    return False
 
 
 # Sections a, b
 
 images, names = read_dir('data')
 numbers, _ = read_dir('numbers')
+for j in range(0,7):
+    for i in range(9,-1,-1):
+        print(compare_hist(images[j], numbers[i]), "image ", j)
+# cv2.imshow(_[5], numbers[7])
+# cv2.imshow(names[3], images[3]) 
+# cv2.waitKey(0)
+# cv2.destroyAllWindows() 
 
-cv2.imshow(names[0], images[0]) 
-cv2.waitKey(0)
-cv2.destroyAllWindows() 
+
+
 exit()
 
 
