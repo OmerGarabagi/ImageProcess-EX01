@@ -14,7 +14,7 @@ warnings.filterwarnings("ignore")
 # Input: numpy array of images and number of gray levels to quantize the images down to
 # Output: numpy array of images, each with only n_colors gray levels
 def quantization(imgs_arr, n_colors=4):
-    threshold = 211
+    threshold = 215
     img_size = imgs_arr[0].shape
     res = []
 
