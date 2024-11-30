@@ -14,7 +14,7 @@ warnings.filterwarnings("ignore")
 # Input: numpy array of images and number of gray levels to quantize the images down to
 # Output: numpy array of images, each with only n_colors gray levels
 def quantization(imgs_arr, n_colors=4):
-    threshold = 212
+    threshold = 211
     img_size = imgs_arr[0].shape
     res = []
 
@@ -92,10 +92,8 @@ def compare_hist(src_image, target):
         window_hist = cv2.calcHist([window], [0], None, [256], [0, 256]).flatten()
         # Compute EMD
         emd = np.sum(np.abs(np.cumsum(target_hist) - np.cumsum(window_hist)))
-        print(f"EMD at position (x={x_start}, y={y}): {emd}")
+        #print(f"EMD at position (x={x_start}, y={y}): {emd}")
         if emd < 260:
-            plt.imshow(window, cmap='gray') 
-            plt.show()
             return True
     return False
 
@@ -106,16 +104,26 @@ def subtask_f(image):
     for i in range(10):
         list_amount.append(get_bar_height(image, i))
     return list_amount
-    
+
+def subtask_g(image,max_height):
+    list_pixels = subtask_f(image)
+    list_students = []
+    for i in range (10):
+        list_students.append(round(max_height*list_pixels[i]/max(list_pixels)))
+    return list_students
+
 
 images, names = read_dir('data')
 numbers, _ = read_dir('numbers')
-# for j in range(0,7):
-#     for i in range(9,-1,-1):
-#         print(compare_hist(images[j], numbers[i]), "image ", j)   subtask d
+max_height_list=[]
+for j in range(0,7):
+    for i in range(9,-1,-1):
+        if (compare_hist(images[j], numbers[i])) :
+            max_height_list.append(i)
+
 gray_images=quantization(images)
 cv2.imshow(names[0],gray_images[0])
-print(subtask_f(gray_images[0]))
+print(subtask_g(gray_images[0],max_height_list[0]))
 # cv2.imshow(_[5], numbers[7])
 # cv2.imshow(names[3], images[3]) 
 cv2.waitKey(0)
