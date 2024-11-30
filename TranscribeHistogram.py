@@ -65,13 +65,8 @@ def compare_hist(src_image, target):
 
     # Compute target histogram and prepare signature
     target_hist = cv2.calcHist([target], [0], None, [256], [0, 256]).flatten()
-    bin_indices = np.arange(256).astype(np.float32)
-    target_signature = np.array(
-        [[h, i] for h, i in zip(target_hist, bin_indices) if h > 0],
-        dtype=np.float32
-    )
 
-        # Define sliding window size
+     # Define sliding window size
     window_height, window_width = 15, 10
 
     # Get the dimensions of the source image
@@ -92,7 +87,6 @@ def compare_hist(src_image, target):
         window_hist = cv2.calcHist([window], [0], None, [256], [0, 256]).flatten()
         # Compute EMD
         emd = np.sum(np.abs(np.cumsum(target_hist) - np.cumsum(window_hist)))
-        #print(f"EMD at position (x={x_start}, y={y}): {emd}")
         if emd < 260:
             return True
     return False
@@ -126,10 +120,8 @@ gray_images=quantization(images)
 for k in range(0,7):
     res = ", ".join(map(str, subtask_g(gray_images[k],max_height_list[k])))
     print("Histogram ", names[k], " gave ", res)
-# cv2.imshow(_[5], numbers[7])
-# cv2.imshow(names[3], images[3]) 
 cv2.waitKey(0)
-# cv2.destroyAllWindows() 
+cv2.destroyAllWindows() 
 
 
 
