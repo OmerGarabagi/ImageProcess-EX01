@@ -14,13 +14,13 @@ warnings.filterwarnings("ignore")
 # Input: numpy array of images and number of gray levels to quantize the images down to
 # Output: numpy array of images, each with only n_colors gray levels
 def quantization(imgs_arr, n_colors=4):
-    threshold = 215
+    threshold = 220
     img_size = imgs_arr[0].shape
     res = []
 
     for img in imgs_arr:
         X = img.reshape(img_size[0] * img_size[1], 1)
-        km = KMeans(n_clusters=n_colors)
+        km = KMeans(n_clusters=n_colors, random_state=0)
         km.fit(X)
 
         img_compressed = km.cluster_centers_[km.labels_]
