@@ -122,8 +122,10 @@ for j in range(0,7):
             max_height_list.append(i)
 
 gray_images=quantization(images)
-cv2.imshow(names[0],gray_images[0])
-print(subtask_g(gray_images[0],max_height_list[0]))
+
+for k in range(0,7):
+    res = ", ".join(map(str, subtask_g(gray_images[k],max_height_list[k])))
+    print("Histogram ", names[k], " gave ", res)
 # cv2.imshow(_[5], numbers[7])
 # cv2.imshow(names[3], images[3]) 
 cv2.waitKey(0)
