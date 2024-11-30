@@ -14,20 +14,27 @@ warnings.filterwarnings("ignore")
 # Input: numpy array of images and number of gray levels to quantize the images down to
 # Output: numpy array of images, each with only n_colors gray levels
 def quantization(imgs_arr, n_colors=4):
-	img_size = imgs_arr[0].shape
-	res = []
-	
-	for img in imgs_arr:
-		X = img.reshape(img_size[0] * img_size[1], 1)
-		km = KMeans(n_clusters=n_colors)
-		km.fit(X)
-		
-		img_compressed = km.cluster_centers_[km.labels_]
-		img_compressed = np.clip(img_compressed.astype('uint8'), 0, 255)
+    threshold = 212
+    img_size = imgs_arr[0].shape
+    res = []
 
-		res.append(img_compressed.reshape(img_size[0], img_size[1]))
-	
-	return np.array(res)
+    for img in imgs_arr:
+        X = img.reshape(img_size[0] * img_size[1], 1)
+        km = KMeans(n_clusters=n_colors)
+        km.fit(X)
+
+        img_compressed = km.cluster_centers_[km.labels_]
+        img_compressed = np.clip(img_compressed.astype('uint8'), 0, 255)
+
+       # Reshape back to original image size
+        quantized_img = img_compressed.reshape(img_size[0], img_size[1])
+        
+        # Threshold the quantized image to black and white
+        binary_img = (quantized_img >= threshold).astype('uint8') * 255
+        
+        res.append(binary_img)
+
+    return np.array(res)
 
 # Input: A path to a folder and formats of images to read
 # Output: numpy array of grayscale versions of images read from input folder, and also a list of their names
@@ -47,7 +54,7 @@ def get_bar_height(image, idx):
 	# Assuming the image is of the same pixel proportions as images supplied in this exercise, the following values will work
 	x_pos = 70 + 40 * idx
 	y_pos = 274
-	while image[y_pos, x_pos] == 1:
+	while image[y_pos, x_pos] == 0:
 		y_pos-=1
 	return 274 - y_pos
 
@@ -94,15 +101,24 @@ def compare_hist(src_image, target):
 
 
 # Sections a, b
+def subtask_f(image):
+    list_amount=[]
+    for i in range(10):
+        list_amount.append(get_bar_height(image, i))
+    return list_amount
+    
 
 images, names = read_dir('data')
 numbers, _ = read_dir('numbers')
-for j in range(0,7):
-    for i in range(9,-1,-1):
-        print(compare_hist(images[j], numbers[i]), "image ", j)
+# for j in range(0,7):
+#     for i in range(9,-1,-1):
+#         print(compare_hist(images[j], numbers[i]), "image ", j)   subtask d
+gray_images=quantization(images)
+cv2.imshow(names[0],gray_images[0])
+print(subtask_f(gray_images[0]))
 # cv2.imshow(_[5], numbers[7])
 # cv2.imshow(names[3], images[3]) 
-# cv2.waitKey(0)
+cv2.waitKey(0)
 # cv2.destroyAllWindows() 
 
 
